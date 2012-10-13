@@ -1,0 +1,32 @@
+# depslib dependency file v1.0
+1347737139 source:c:\users\jack\desktop\programming\c++\voxel rendering\main.cpp
+	<iostream>
+	<cstdlib>
+
+1345683285 c:\users\jack\desktop\programming\c++\voxel rendering\engine.h
+	<SDL/SDL.h>
+	<vWindow.h>
+	"lightsource.h"
+
+1345678615 c:\users\jack\desktop\programming\c++\voxel rendering\vobj.h
+	"vNode.h"
+
+1345659245 c:\users\jack\desktop\programming\c++\voxel rendering\vstatic.h
+	"vActor.h"
+
+1345678615 c:\users\jack\desktop\programming\c++\voxel rendering\vbone.h
+	"vObj.h"
+
+1345656678 c:\users\jack\desktop\programming\c++\voxel rendering\vactor.h
+	"vBone.h"
+
+1345682402 c:\users\jack\desktop\programming\c++\voxel rendering\vcamera.h
+	<cmath>
+	"vStatic.h"
+
+1347308769 c:\users\jack\desktop\programming\c++\voxel rendering\lightsource.h
+	"vCamera.h"
+
+1345662530 c:\users\jack\desktop\programming\c++\voxel rendering\vnode.h
+	<vector>
+

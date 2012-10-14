@@ -98,16 +98,17 @@ class engine{
 	 * apply post-processing filters
 	 */
 	void drawScene(){
+		/*
 		vObj::cam=camera;
 		vector<vObj*> t;
 		for(int i=0;i<objects.size();i++){
 			if(camera.canSee(objects[i])){
 				t.push_back(&objects[i]);
 			}
-		}
+		}//*/
 
 		pixel parr[px*py];
-		camera.rendView(px,py,t,&scene,parr);
+		camera.rendView(px,py,&objects,&scene,parr);
 	}
 
 	/**format:
@@ -116,6 +117,7 @@ class engine{
 	 * data:
 	 *
 	*/
+	//TODO, figure out the file format
 	void readFile(string path){
 	}
 };

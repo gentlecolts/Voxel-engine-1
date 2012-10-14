@@ -3,6 +3,7 @@
 
 #include "vActor.h"//so that only static needs to be included and each class is only included once
 
+///TODO determin if this file and class is needed, why cant vobj be the static
 class vStatic: public vObj{
 
 };

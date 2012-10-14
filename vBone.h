@@ -3,6 +3,7 @@
 
 #include "vObj.h"
 
+//TODO learn how quaternions work, bone will need this
 class vBone:public vObj{
 	public:
 	bool deform;//if true, voxel group stretches, false then just moves, think mittens vs fingers

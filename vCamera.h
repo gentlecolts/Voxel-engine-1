@@ -1,9 +1,7 @@
 #ifndef VCAMERA_H_INCLUDED
 #define VCAMERA_H_INCLUDED
 
-#include <cmath>
 #include "vStatic.h"
-using namespace std;
 
 float invsqrt(float x){
 	float xhalf=0.5f*x;
@@ -16,43 +14,20 @@ float invsqrt(float x){
 
 #define sqrt(x) (1.0/invsqrt(x))
 
-struct pixel{
-	/**needs:
-	* rgb as double if post processing effects and uint8 if not
-	* distance as double
-	* alpha as 0-255
-	*/
-	double r,g,b,d;
-	uint8_t a;
-};
-
-class vector3d{
-	public:
-	double x,y,z,dx,dy,dz;
-	vector3d(double x=0,double y=0,double z=0,double dx=0,double dy=0,double dz=0){
-		this->x=x;
-		this->y=y;
-		this->z=z;
-		this->dx=dx;
-		this->dy=dy;
-		this->dz=dz;
-	}
-};
-
 struct plane{
 	double a,b,c,d;
 };
 
+//TODO: add tilt
 class vCamera{
 	private:
-	double x3,y3,z3,dx,dy,dz,r,sr1,sr2,sr3;//so that they dont need to be created and destroyed each time the projection is called
 	double inc,az,sinc,saz,cinc,caz;//inclination and aximuth, and their sine and cosine
-	double width;
 	plane scrn;
 
 	public:
+	double width,height;
 	double x,y,z;
-	double viewAng;
+	double viewAng;//angle formed by the camera origin the widthwise bounds of the surface
 	double zoom;
 	vector3d dir;//use whenever a vector is needed
 
@@ -79,120 +54,56 @@ class vCamera{
 		return cam;
 	}
 
-	void proj2d(double x,double y,double z,double *x2,double *y2){//x,y,z are the point to project down
+	//takes a point and rotates it in the opposite direction that the camera is rotated
+	//usefull for alligning things to the axis
+	void unrot(double x,double y,double z,double* x2,double* y2,double*z2){
+		double dx,dy,dz,r,sr1,sr2,sr3;//consider making these private class vars if the program is too slow
 		dx=x-this->x;//position if camera is center
 		dy=y-this->y;
 		dz=z-this->z;
 		r=dx*dx+dy*dy+dz*dz;
 
-		/**
-		a=acos(z/r)-inc
-		b=atan(y/x)-az
-		r=sqrt(x*x+y*y+z*z)
-
-		sin(acos(x))=sqrt(1-x^2)
-		sin(atan(x))=x/sqrt(x*x+1)
-		cos(atan(x))=1/sqrt(x*x+1)
-
-		x=r*sin(a)*cos(b)
-		x=r*sin(acos(z/r)-inc)*cos(atan(y/x)-az)
-		x=r*(sin(acos(z/r))*cos(inc)-cos(acos(z/r))*sin(inc))*(cos(atan(y/x))*cos(az)+sin(atan(y/x))*sin(az))
-		x=r*(sqrt(1-(z/r)^2)*cos(inc)-z/r*sin(inc))*(1/sqrt((y/x)^2+1)*cos(az)+(y/x)/sqrt((y/x)^2+1)*sin(az))
-		x=(r*sqrt(1-(z/r)^2)*cos(inc)-z*sin(inc))*(cos(az)+y/x*sin(az))/sqrt((y/x)^2+1)
-		x=(r*z/r*sqrt(1/(z/r)^2-1)*cos(inc)-z*sin(inc))*(cos(az)+y/x*sin(az))/sqrt((y/x)^2+1)
-		x=z*(sqrt((r*r)/(z*z)-1)*cos(inc)-sin(inc))*(cos(az)+y/x*sin(az))/sqrt((y*y)/(x*x)+1)
-
-		y=r*sin(a)*sin(b)
-		y=r*sin(acos(z/r)-inc)*sin(atan(y/x)-az)
-		y=r*(sin(acos(z/r))*cos(inc)-cos(acos(z/r))*sin(inc))*(sin(atan(y/x))*cos(az)-cos(atan(y/x))*sin(az))
-		y=r*(sqrt(1-(z/r)^2)*cos(inc)-z/r*sin(inc))*((y/x)/sqrt((y/x)^2+1)*cos(az)-1/sqrt((y/x)^2+1)*sin(az))
-		y=(r*sqrt(1-(z/r)^2)*cos(inc)-z*sin(inc))*((y/x)*cos(az)-sin(az))/sqrt((y/x)^2+1)
-		y=(r*z/r*sqrt(1/(z/r)^2-1)*cos(inc)-z*sin(inc))*((y/x)*cos(az)-sin(az))/sqrt((y/x)^2+1)
-		y=z*(sqrt((r/z)^2-1)*cos(inc)-sin(inc))*((y/x)*cos(az)-sin(az))/sqrt((y/x)^2+1)
-		y=z*(sqrt((r*r)/(z*z)-1)*cos(inc)-sin(inc))*((y/x)*cos(az)-sin(az))/sqrt((y/x)^2+1)
-
-		z=r*cos(a)
-		z=r*cos(acos(z/r)-inc)
-		z=r*(cos(acos(z/r))*cos(inc)+sin(acos(z/r))*sin(inc))
-		z=r*(z/r*cos(inc)+sqrt(1-(z/r)^2)*sin(inc))
-		z=(z*cos(inc)+r*sqrt(1-(z/r)^2)*sin(inc))
-		z=(z*cos(inc)+r*z/r*sqrt(1/(z/r)^2-1)*sin(inc))
-		z=(z*cos(inc)+z*sqrt((r*r)/(z*z)-1)*sin(inc))
-		z=z*(cos(inc)+sqrt((r*r)/(z*z)-1)*sin(inc))
-		z*=(cos(inc)+sqrt((r*r)/(z*z)-1)*sin(inc))
-		*/
+		///see notes.txt for formula derivations
 
 		sr1=sqrt((r*r)/(z*z)-1);
 		sr2=sqrt((y*y)/(x*x)+1);
-		x3=z*(sr1*cinc-sinc)*(caz+y/x*saz)/sr2;
-		y3=z*(sr1*cinc-sinc)*((y/x)*caz-saz)/sr2;
-		z3=z*(cinc+sr1*sinc);
+		*x2=z*(sr1*cinc-sinc)*(caz+y/x*saz)/sr2;
+		*y2=z*(sr1*cinc-sinc)*((y/x)*caz-saz)/sr2;
+		*z2=z*(cinc+sr1*sinc);
+	}
+	void proj2d(double x,double y,double z,double *x2,double *y2){//x,y,z are the point to project down
+		double x3,y3,z3;
+
+		unrot(x,y,z,&x3,&y3,&z3);
 
 		*x2=x3*zoom/(zoom+z3);
 		*y2=y3*zoom/(zoom+z3);
 	}
-
-	bool canSee(vObj obj){
+	bool canSee(vObj* obj){
 		/**for each vertex of the cube
 		 *  find normal to camera origin
 		 *  find normal to object center
 		 * if all solving t's have the same sign return false
 		 * else:
-		 *  can any point intersect the infinite square pyramid created by the camera?
+		 *  can any point intersect the infinite square pyramid (pyramid of vision) created by the camera?
 		 *  if yes return true
 		 * return false
 		 */
-		corners corn=obj.getCorners();
-	}
+		corners corn=obj->getCorners();
+		coords c;
+		double x2,y2,z2;
+		for(int i=0;i<8;i++){
+			c=corn[i];
+			c.x-=this->x;
+			c.y-=this->y;
+			c.z-=this->z;
 
-	#define sphere true
-	/**vec is a vector formed by the camera and its origin
-	 * cor is the senter of the current voxel
-	 * scale is the scale of the current voxel*/
-	bool intersects(vector3d vec,coords cor,coords scale){
-		double a,b,c,d,e,f,x0,y0,z0;
-		d=vec.dx;
-		e=vec.dy;
-		f=vec.dz;
-		x0=vec.x-cor.x;
-		y0=vec.y-cor.y;
-		z0=vec.z-cor.z;
-		#if sphere
-		double rx,ry,rz;
-		rx=scale.x*scale.x;
-		ry=scale.y*scale.y;
-		rz=scale.z*scale.z;
+			unrot(c.x,c.y,c.z,&x2,&y2,&z2);//remember to make sure that this alligns it properly
 
-		a=d*d/rx+e*e/ry+f*f/rz;
-		b=d*x0/rx+e*y0/ry+f*z0/rz;
-		c=x0*x0/rx+y0*y0/ry+z0*z0/rz;
-		return !(b*b<a*c);
-		#else
-		a=scale.x/2;
-		b=scale.y/2;
-		c=scale.z/2;
-
-		vector<double> vl,vh;
-		if(d==0 && abs(x0)>a){return false;}
-		else{
-			vl.push_back(-(a+x0)/d);
-			vh.push_back((a-x0)/d);
+			//after rotating, z should be positive if the camera is pointed towards the point, meaning negative z will make this return false
+			if(abs(x2)>z2*width/2 || abs(y2)>z2*height/2){return false;}
 		}
-
-		if(e==0 && abs(y0)>b){return false;}
-		else{
-			vl.push_back(-(b+y0)/e);
-			vh.push_back((b-y0)/e);
-		}
-
-		if(f==0 && abs(z0)>c){return false;}
-		else{
-			vl.push_back(-(c+z0)/f);
-			vh.push_back((c-z0)/f);
-		}
-
-		return max(vl)<=min(vh);
-		#endif
+		return true;
 	}
 
 	vector3d getNormal(){
@@ -206,12 +117,14 @@ class vCamera{
 		return vec;
 	}
 
-	void draw(vObj *obj,vector3d norm){
-
+	//use each vector from this to call obj's draw and render it to parr
+	//first find the 2d bounding box of the object:find the min and max coords of the
+	//
+	void draw(vObj* obj,vector3d* norm,pixel parr[]){
 	}
 
-	//PRECONDITION: objarr is an array of visible voxel objects sorted by distance from this camera, parr is size px*py
-	void rendView(int px,int py,vector<vObj*> objarr,vStatic *scene,pixel parr[]){
+	//PRECONDITION: parr is size px*py
+	void rendView(int px,int py,vector<vObj>* objarr,vStatic *scene,pixel parr[]){
 		/**for each object in objarr:
 		 * if bounding box is in the camera's view
 		 * project bounding box coords to find min and max x and y
@@ -238,9 +151,13 @@ class vCamera{
 		scrn.c=norm.dz;
 		scrn.d=-(norm.dx*center.x+norm.dy*center.y+norm.dz*center.z);
 
-		draw(scene,norm);
-		for(int i=0;i<objarr.size();i++){
-			draw(objarr[i],norm);
+		scene->draw(norm);
+		height=py*width/px;
+
+		for(int i=0;i<objarr->size();i++){
+			if(canSee(&(*objarr)[i])){
+				draw(&(*objarr)[i],&norm,parr);
+			}
 		}
 	}
 

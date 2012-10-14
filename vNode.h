@@ -2,6 +2,8 @@
 #define VNODE_H_INCLUDED
 
 #include <vector>
+#include <cmath>
+using namespace std;
 
 class vNode{
 	public:

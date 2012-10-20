@@ -89,6 +89,9 @@ class vCamera{
 		 *  if yes return true
 		 * return false
 		 */
+		#define method 2
+		#if method==0
+		//intersect cube with
 		corners corn=obj->getCorners();
 		coords c;
 		double x2,y2,z2;
@@ -100,10 +103,19 @@ class vCamera{
 
 			unrot(c.x,c.y,c.z,&x2,&y2,&z2);//remember to make sure that this alligns it properly
 
-			//after rotating, z should be positive if the camera is pointed towards the point, meaning negative z will make this return false
-			if(abs(x2)>z2*width/2 || abs(y2)>z2*height/2){return false;}
+			//after rotating, z should be positive if the camera is pointed towards the point, meaning all negative z will make this return false
+			if(abs(x2)>z2*width/2 || abs(y2)>z2*height/2){return true;}
 		}
-		return true;
+		return false;
+		#elif method==1
+		//assume the voxel is facing you, is a cube, and the max length is the len for all sides
+		//should be faster at the cost of false positives near the edges, they wont get
+		double maxs=max(obj->sx,max(obj->sy,obj->sz));
+		#elif method==2
+		//intersect all vectors of the camera origin and the voxel corners with the screen, if any intersect, then return true
+		//reasoning being that the intersection formula might be faster then the projection one
+		corners corn=obj->getCorners();
+		#endif
 	}
 
 	vector3d getNormal(){

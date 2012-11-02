@@ -41,6 +41,7 @@
 		<Unit filename="engine.h" />
 		<Unit filename="landGen.h" />
 		<Unit filename="lightsource.h" />
+		<Unit filename="notes.txt" />
 		<Unit filename="vActor.h" />
 		<Unit filename="vBone.h" />
 		<Unit filename="vCamera.h" />

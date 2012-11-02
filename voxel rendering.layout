@@ -13,6 +13,9 @@
 	<File name="lightsource.h" open="1" top="0" tabpos="10">
 		<Cursor position="553" topLine="0" />
 	</File>
+	<File name="notes.txt" open="1" top="0" tabpos="11">
+		<Cursor position="67" topLine="0" />
+	</File>
 	<File name="vActor.h" open="1" top="0" tabpos="1">
 		<Cursor position="154" topLine="0" />
 	</File>
@@ -20,13 +23,13 @@
 		<Cursor position="129" topLine="0" />
 	</File>
 	<File name="vCamera.h" open="1" top="1" tabpos="5">
-		<Cursor position="3401" topLine="98" />
+		<Cursor position="2912" topLine="48" />
 	</File>
 	<File name="vNode.h" open="1" top="0" tabpos="6">
 		<Cursor position="111" topLine="0" />
 	</File>
 	<File name="vObj.h" open="1" top="0" tabpos="4">
-		<Cursor position="766" topLine="23" />
+		<Cursor position="718" topLine="27" />
 	</File>
 	<File name="vStatic.h" open="1" top="0" tabpos="8">
 		<Cursor position="269" topLine="0" />

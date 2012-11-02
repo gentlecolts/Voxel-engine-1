@@ -23,13 +23,13 @@ class vCamera{
 	private:
 	double inc,az,sinc,saz,cinc,caz;//inclination and aximuth, and their sine and cosine
 	plane scrn;
-	vector3d xmag,ymag,xcomp,ycomp;//xmag and ymag are from the origin and have the width and height only, xcomp and ycomp are
-	double width,height;///consider removing these of these and replacing them with the ratio of height to width, and assume width is 1, only the ratio matters with the vector projection method
-	double viewAng;//angle formed by the camera origin the widthwise bounds of the surface
-	double zoom;//distance from origin to screen center
-	double x,y,z;
 
 	public:
+	double width,height;
+	double x,y,z;
+	double viewAng;//angle formed by the camera origin the widthwise bounds of the surface
+	double zoom;
+	vector3d dir;//use whenever a vector is needed
 
 	vCamera(double xstart=0,double ystart=0,double zstart=0,double incstart=0,double azstart=0,double viewangle=90,double defZoom=1){
 		x=xstart;
@@ -54,53 +54,31 @@ class vCamera{
 		return cam;
 	}
 
-	void pnt2scrn(double x,double y,double z,double* kx,double* ky){
-		/**find the vector from the camera origin to the point
-		 * intersect that vector with the plane that the screen is on
-		 * get the vector from the screen center to the point
-		 * split it into the components of xcomp and ycomp
-		 * the constants of this split tell where it is reletive to the center of the actual screen
-		 * (pixWidth*(kw+1)/2,pixHeight-pixHeight*(kh+1)/2)
-		 * aka
-		 * (pixWidth*(kw+1)/2,pixHeight*(1-kh)/2)
-		 */
-		vector3d vec,plane;
-		vec.x=this->x;
-		vec.y=this->y;
-		vec.z=this->z;
-		vec.dx=x-this->x;
-		vec.dy=y-this->y;
-		vec.dz=z-this->z;
+	//takes a point and rotates it in the opposite direction that the camera is rotated
+	//usefull for alligning things to the axis
+	void unrot(double x,double y,double z,double* x2,double* y2,double*z2){
+		double dx,dy,dz,r,sr1,sr2,sr3;//consider making these private class vars if the program is too slow
+		dx=x-this->x;//position if camera is center
+		dy=y-this->y;
+		dz=z-this->z;
+		r=dx*dx+dy*dy+dz*dz;
 
-		plane=getNormal();
+		///see notes.txt for formula derivations
 
-		double t,a,b,c,d;
-		a=plane.dx;
-		b=plane.dy;
-		c=plane.dz;
-		d=a*(plane.x)+b*(plane.y)+c*(plane.z);
-		t=(d-a*(this->x)-b*(this->y)-c*(this->z))/(a*(vec.dx)+b*(vec.dy)+c*(vec.dz));
+		sr1=sqrt((r*r)/(z*z)-1);
+		sr2=sqrt((y*y)/(x*x)+1);
+		*x2=z*(sr1*cinc-sinc)*(caz+y/x*saz)/sr2;
+		*y2=z*(sr1*cinc-sinc)*((y/x)*caz-saz)/sr2;
+		*z2=z*(cinc+sr1*sinc);
+	}
+	void proj2d(double x,double y,double z,double *x2,double *y2){//x,y,z are the point to project down
+		double x3,y3,z3;
 
-		a=t*(this->x+t*(x-this->x)-plane.x);//recycling a,b, and c
-		b=t*(this->y+t*(y-this->y)-plane.y);
-		c=t*(this->z+t*(z-this->z)-plane.z);
-		if((xcomp.dx)*(ycomp.dy)!=(xcomp.dy)*(ycomp.dx)){
-			*kx=(a*(ycomp.dy)-b*(ycomp.dx))/((xcomp.dx)*(ycomp.dy)-(xcomp.dy)*(ycomp.dx));
-		}else if((xcomp.dx)*(ycomp.dz)!=(xcomp.dz)*(ycomp.dx)){
-			*kx=(a*(ycomp.dz)-c*(ycomp.dx))/((xcomp.dx)*(ycomp.dz)-(xcomp.dz)*(ycomp.dx));
-		}else{
-			*kx=(c*(ycomp.dy)-b*(ycomp.dz))/((xcomp.dz)*(ycomp.dy)-(xcomp.dy)*(ycomp.dz));
-		}
+		unrot(x,y,z,&x3,&y3,&z3);
 
-		if(ycomp.dx!=0){*ky=(a-*kx*(xcomp.dx))/ycomp.dx;}
-		else if(ycomp.dy!=0){*ky=(b-*kx*(xcomp.dy))/ycomp.dy;}
-		else{*ky=(c-*kx*(xcomp.dz))/ycomp.dz;}
-	}/*
-	void proj2d(double x,double y,double z,int *x2,int *y2){//x,y,z are the point to project down
-		double kx,ky;
-		pnt2scrn(x,y,z,&kx,&ky);
-
-	}//*/
+		*x2=x3*zoom/(zoom+z3);
+		*y2=y3*zoom/(zoom+z3);
+	}
 	bool canSee(vObj* obj){
 		/**for each vertex of the cube
 		 *  find normal to camera origin
@@ -111,12 +89,29 @@ class vCamera{
 		 *  if yes return true
 		 * return false
 		 */
-		#define method 1
+		#define method 2
 		#if method==0
+		//intersect cube with
+		corners corn=obj->getCorners();
+		coords c;
+		double x2,y2,z2;
+		for(int i=0;i<8;i++){
+			c=corn[i];
+			c.x-=this->x;
+			c.y-=this->y;
+			c.z-=this->z;
+
+			unrot(c.x,c.y,c.z,&x2,&y2,&z2);//remember to make sure that this alligns it properly
+
+			//after rotating, z should be positive if the camera is pointed towards the point, meaning all negative z will make this return false
+			if(abs(x2)>z2*width/2 || abs(y2)>z2*height/2){return true;}
+		}
+		return false;
+		#elif method==1
 		//assume the voxel is facing you, is a cube, and the max length is the len for all sides
 		//should be faster at the cost of false positives near the edges, they wont get
 		double maxs=max(obj->sx,max(obj->sy,obj->sz));
-		#elif method==1
+		#elif method==2
 		//intersect all vectors of the camera origin and the voxel corners with the screen, if any intersect, then return true
 		//reasoning being that the intersection formula might be faster then the projection one
 		corners corn=obj->getCorners();
@@ -125,12 +120,12 @@ class vCamera{
 
 	vector3d getNormal(){
 		vector3d vec;
-		vec.dx=zoom*sinc*caz;
-		vec.dy=zoom*sinc*saz;
-		vec.dz=zoom*cinc;
-		vec.x=x+vec.dx;
-		vec.y=y+vec.dy;
-		vec.z=z+vec.dz;
+		vec.x=x;
+		vec.y=y;
+		vec.z=z;
+		vec.dx=zoom*sinc*caz-x;
+		vec.dy=zoom*sinc*saz-y;
+		vec.dz=zoom*cinc-z;
 		return vec;
 	}
 
@@ -169,6 +164,7 @@ class vCamera{
 		scrn.d=-(norm.dx*center.x+norm.dy*center.y+norm.dz*center.z);
 
 		scene->draw(norm);
+		height=py*width/px;
 
 		for(int i=0;i<objarr->size();i++){
 			if(canSee(&(*objarr)[i])){
@@ -177,25 +173,12 @@ class vCamera{
 		}
 	}
 
-	///changing the width or height require that the vectors are updated, so does rotation
 	double getInc(){return inc;}
 	double getAz(){return az;}
 	void setInc(double amount){inc=amount;sinc=sin(inc);cinc=cos(inc);}
 	void setAz(double amount){az=amount;saz=sin(az);caz=cos(az);}
 	void addInc(double amount){setInc(inc+amount);}
 	void addAz(double amount){setAz(az+amount);}
-	double getViewAngle(){return viewAng;}
-	void setViewAngle(double newAng){viewAng=newAng;}///also needs to set width
-	double getWidth(){return width;}///also needs to set viewangle
-	double getHeight(){return height;}
-	void setWidth(double w){}
-	void setHeight(double h){height=h;}
-
-	///note to self, get coords, centers of component vecs should still have old dist, adjust origin or screen center to the new dist
-	///potentiall helpfull, points have same inclination and azimuth, but different radius
-	///also changes viewagle
-	double getZoom(){return zoom;}
-	void setZoom(double newZoom){zoom=newZoom;}
 };
 
 #endif // VCAMERA_H_INCLUDED

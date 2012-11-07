@@ -1,3 +1,66 @@
+flashsort
+void flashsort(vector<vObj*> arr,int len){
+	//CLASS FORMATION
+	double amin=*arr[0];
+	int nmax=1;
+	const int m=0.42*len;
+	int L[m];
+	for(int i=0;i<len;i++){
+		 if(*arr[i]<amin){amin=*arr[i];}
+		 if(*arr[i]>*arr[nmax]){nmax=i+1;}
+	}
+	if(amin==*arr[nmax-1]){return;}
+	double C1=(m-1)/(*arr[nmax-1]-amin);
+
+	for(int k=0;k<m;k++){
+		L[k]=0;
+	}
+	int K;
+	for(int i=0;i<len;i++){
+		 K=1+(int)(C1*(*arr[i]-amin));
+		 L[K-1]=L[K-1]+1;
+	}
+	for(int k=2;k<=m;k++){
+		 L[k-1]=L[k-1] + L[k-2];
+	}
+	vObj *tmp=arr[nmax-1];
+	arr[nmax-1]=arr[0];
+	arr[0]=tmp;
+	//PERMUTATION
+	double NMOVE=0;
+	int J=1;
+	K=m;
+	vObj* FLASH;
+	while(NMOVE<len - 1){
+		 while(J>L[K-1]){
+			++J;
+			K=1+(int)(C1*(*arr[J-1]-amin));
+		 }
+		 FLASH=arr[J-1];
+		 while(J!=L[K-1]+1){
+			K=1+(int)(C1*(*FLASH - amin));
+			tmp=arr[L[K-1]-1];
+			arr[L[K-1]-1]=FLASH;
+			FLASH=tmp;
+			L[K-1]=L[K-1] - 1;
+			++NMOVE;
+		 }
+	}
+	//STRAIGHT INSERTION
+	for(int i=len-2;i>=1;i--){
+		 if(arr[i]<arr[i-1]){
+			tmp=arr[i-1];
+			J=i;
+			while(arr[J]<tmp){
+			   arr[J-1]=arr[J];
+			   ++J;
+			}
+			arr[J-1]=tmp;
+		 }
+	}
+}
+
+----------------------------------
 formula derivations for projection
 a=acos(z/r)-inc
 b=atan(y/x)-az

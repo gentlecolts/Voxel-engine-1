@@ -51,8 +51,6 @@ class vObj{
 	double x,y,z;
 	double sx,sy,sz;
 
-	static coords cam;
-
 	vObj(double x_initial=0,double y_initial=0,double z_initial=0,double sx_initial=0,double sy_initial=0,double sz_initial=0){
 		x=x_initial;
 		y=y_initial;
@@ -60,11 +58,6 @@ class vObj{
 		sx=sx_initial;
 		sy=sy_initial;
 		sz=sz_initial;
-	}
-
-	operator double(){
-		double dx=x-cam.x,dy=y-cam.y,dz=y-cam.z;
-		return dx*dx+dy*dy+dz*dz;
 	}
 
 	corners getCorners(){

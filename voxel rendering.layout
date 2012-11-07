@@ -4,8 +4,8 @@
 	<File name="Main.cpp" open="1" top="0" tabpos="3">
 		<Cursor position="117" topLine="0" />
 	</File>
-	<File name="engine.h" open="1" top="0" tabpos="2">
-		<Cursor position="412" topLine="10" />
+	<File name="engine.h" open="1" top="1" tabpos="2">
+		<Cursor position="1039" topLine="29" />
 	</File>
 	<File name="landGen.h" open="1" top="0" tabpos="7">
 		<Cursor position="231" topLine="0" />
@@ -14,7 +14,7 @@
 		<Cursor position="553" topLine="0" />
 	</File>
 	<File name="notes.txt" open="1" top="0" tabpos="11">
-		<Cursor position="67" topLine="0" />
+		<Cursor position="9" topLine="0" />
 	</File>
 	<File name="vActor.h" open="1" top="0" tabpos="1">
 		<Cursor position="154" topLine="0" />
@@ -22,14 +22,14 @@
 	<File name="vBone.h" open="1" top="0" tabpos="9">
 		<Cursor position="129" topLine="0" />
 	</File>
-	<File name="vCamera.h" open="1" top="1" tabpos="5">
-		<Cursor position="2912" topLine="48" />
+	<File name="vCamera.h" open="1" top="0" tabpos="5">
+		<Cursor position="4578" topLine="133" />
 	</File>
 	<File name="vNode.h" open="1" top="0" tabpos="6">
-		<Cursor position="111" topLine="0" />
+		<Cursor position="388" topLine="0" />
 	</File>
 	<File name="vObj.h" open="1" top="0" tabpos="4">
-		<Cursor position="718" topLine="27" />
+		<Cursor position="1149" topLine="18" />
 	</File>
 	<File name="vStatic.h" open="1" top="0" tabpos="8">
 		<Cursor position="269" topLine="0" />

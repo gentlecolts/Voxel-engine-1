@@ -19,83 +19,20 @@
 class engine{
 	public:
 	int depth;
-	vector<vObj> objects;
-	vStatic scene;
+	vector<vObj>* objects;//these are pointers to allow the user of this libary to separatly load and set the objects of the current map
+	vStatic* scene;       //allowing for quick swapping and the use of threads as memory allows
 	vCamera camera;
 
 	int px,py;
 
 	/**create the window
 	 * create the camera
-	 * set the camera pointer in vobj to the camera
 	 */
 	engine(){
 	}
 
-	void flashsort(vector<vObj*> arr,int len){//TODO change to vObj array, vObj needs a double cast defined as the distance^2 from the camera
-		//CLASS FORMATION
-		double amin=*arr[0];
-		int nmax=1;
-		const int m=0.42*len;
-		int L[m];
-		for(int i=0;i<len;i++){
-			 if(*arr[i]<amin){amin=*arr[i];}
-			 if(*arr[i]>*arr[nmax]){nmax=i+1;}
-		}
-		if(amin==*arr[nmax-1]){return;}
-		double C1=(m-1)/(*arr[nmax-1]-amin);
-
-		for(int k=0;k<m;k++){
-			L[k]=0;
-		}
-		int K;
-		for(int i=0;i<len;i++){
-			 K=1+(int)(C1*(*arr[i]-amin));
-			 L[K-1]=L[K-1]+1;
-		}
-		for(int k=2;k<=m;k++){
-			 L[k-1]=L[k-1] + L[k-2];
-		}
-		vObj *tmp=arr[nmax-1];
-		arr[nmax-1]=arr[0];
-		arr[0]=tmp;
-		//PERMUTATION
-		double NMOVE=0;
-		int J=1;
-		K=m;
-		vObj* FLASH;
-		while(NMOVE<len - 1){
-			 while(J>L[K-1]){
-				++J;
-				K=1+(int)(C1*(*arr[J-1]-amin));
-			 }
-			 FLASH=arr[J-1];
-			 while(J!=L[K-1]+1){
-				K=1+(int)(C1*(*FLASH - amin));
-				tmp=arr[L[K-1]-1];
-				arr[L[K-1]-1]=FLASH;
-				FLASH=tmp;
-				L[K-1]=L[K-1] - 1;
-				++NMOVE;
-			 }
-		}
-		//STRAIGHT INSERTION
-		for(int i=len-2;i>=1;i--){
-			 if(arr[i]<arr[i-1]){
-				tmp=arr[i-1];
-				J=i;
-				while(arr[J]<tmp){
-				   arr[J-1]=arr[J];
-				   ++J;
-				}
-				arr[J-1]=tmp;
-			 }
-		}
-	}
-
-	/**sort visible objects by distance to camera
-	 * have the camera draw them
-	 * apply post-processing filters
+	/**have the camera draw objects
+	 * apply post-processing filters, try to make it as modular as possable, how can the programmer implement their own?
 	 */
 	void drawScene(){
 		/*
@@ -107,8 +44,8 @@ class engine{
 			}
 		}//*/
 
-		pixel parr[px*py];
-		camera.rendView(px,py,&objects,&scene,parr);
+		pixel parr[px*py];//because otherwise rendview would have to know how big the screen is
+		camera.rendView(px,py,objects,scene,parr);
 	}
 
 	/**format:

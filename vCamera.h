@@ -32,7 +32,7 @@ class vCamera{
 	public:
 	int px,py;//the actual # of pixels on the screen
 
-	vCamera(int xpixels,int ypixels,double xstart=0,double ystart=0,double zstart=0,double incstart=0,double azstart=0,double viewangle=90,double defZoom=1){
+	vCamera(int xpixels=0,int ypixels=0,double xstart=0,double ystart=0,double zstart=0,double incstart=0,double azstart=0,double viewangle=90,double defZoom=1){
 		px=xpixels;
 		py=ypixels;
 		x=xstart;

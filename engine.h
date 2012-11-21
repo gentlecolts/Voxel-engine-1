@@ -10,7 +10,7 @@
 */
 
 #define SDL
-#include <vWindow.h>//TODO, remake window for this program, other one is a mess
+//#include <vWindow.h>//TODO, remake window for this program, other one is a mess
 #undef SDL
 
 #include "lightsource.h"
@@ -21,7 +21,7 @@ class engine{
 	int depth;
 	vector<vObj>* objects;//these are pointers to allow the user of this libary to separatly load and set the objects of the current map
 	vStatic* scene;       //allowing for quick swapping and the use of threads as memory allows
-	vCamera camera;
+	vCamera camera;///figure out how to initialize here
 
 	int px,py;
 
@@ -51,7 +51,7 @@ class engine{
 	/**format:
 	 * vox
 	 * ascii version number ended with ";" (ex vox123;)
-	 * data:
+	 * data: read as if it were a heap, but the information stored in vnode's shape will define the tree
 	 *
 	*/
 	//TODO, figure out the file format

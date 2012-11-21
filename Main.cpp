@@ -1,6 +1,6 @@
 #include "engine.h"
 //using namespace std;
 
-int main(int argv,char** argc){//TODO change to sdl main
+int main(){
 	return 0;
 }

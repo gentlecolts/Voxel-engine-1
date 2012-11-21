@@ -2,16 +2,16 @@
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Debug" />
 	<File name="Main.cpp" open="1" top="0" tabpos="3">
-		<Cursor position="117" topLine="0" />
+		<Cursor position="19" topLine="0" />
 	</File>
-	<File name="engine.h" open="1" top="1" tabpos="2">
-		<Cursor position="1039" topLine="29" />
+	<File name="engine.h" open="1" top="0" tabpos="2">
+		<Cursor position="385" topLine="35" />
 	</File>
 	<File name="landGen.h" open="1" top="0" tabpos="7">
 		<Cursor position="231" topLine="0" />
 	</File>
 	<File name="lightsource.h" open="1" top="0" tabpos="10">
-		<Cursor position="553" topLine="0" />
+		<Cursor position="551" topLine="0" />
 	</File>
 	<File name="notes.txt" open="1" top="0" tabpos="11">
 		<Cursor position="9" topLine="0" />
@@ -20,16 +20,16 @@
 		<Cursor position="154" topLine="0" />
 	</File>
 	<File name="vBone.h" open="1" top="0" tabpos="9">
-		<Cursor position="129" topLine="0" />
+		<Cursor position="149" topLine="0" />
 	</File>
 	<File name="vCamera.h" open="1" top="0" tabpos="5">
-		<Cursor position="4578" topLine="133" />
+		<Cursor position="989" topLine="21" />
 	</File>
 	<File name="vNode.h" open="1" top="0" tabpos="6">
-		<Cursor position="388" topLine="0" />
+		<Cursor position="685" topLine="5" />
 	</File>
-	<File name="vObj.h" open="1" top="0" tabpos="4">
-		<Cursor position="1149" topLine="18" />
+	<File name="vObj.h" open="1" top="1" tabpos="4">
+		<Cursor position="4909" topLine="180" />
 	</File>
 	<File name="vStatic.h" open="1" top="0" tabpos="8">
 		<Cursor position="269" topLine="0" />

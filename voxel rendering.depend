@@ -1,31 +1,35 @@
 # depslib dependency file v1.0
-1347737214 source:c:\users\jack\desktop\programming\c++\voxel rendering\main.cpp
+1352596129 source:c:\users\jack\desktop\programming\c++\voxel rendering\main.cpp
 	"engine.h"
+	<iostream>
 
-1350171383 c:\users\jack\desktop\programming\c++\voxel rendering\engine.h
+1352596109 c:\users\jack\desktop\programming\c++\voxel rendering\engine.h
 	<SDL/SDL.h>
-	<vWindow.h>
 	"lightsource.h"
 
-1350168175 c:\users\jack\desktop\programming\c++\voxel rendering\vobj.h
+1352588793 c:\users\jack\desktop\programming\c++\voxel rendering\vobj.h
 	"vNode.h"
 
-1350165891 c:\users\jack\desktop\programming\c++\voxel rendering\vstatic.h
+1350162291 c:\users\jack\desktop\programming\c++\voxel rendering\vstatic.h
 	"vActor.h"
 
-1350165111 c:\users\jack\desktop\programming\c++\voxel rendering\vbone.h
+1350161511 c:\users\jack\desktop\programming\c++\voxel rendering\vbone.h
 	"vObj.h"
 
-1345656678 c:\users\jack\desktop\programming\c++\voxel rendering\vactor.h
+1345653078 c:\users\jack\desktop\programming\c++\voxel rendering\vactor.h
 	"vBone.h"
 
-1350428259 c:\users\jack\desktop\programming\c++\voxel rendering\vcamera.h
+1352588932 c:\users\jack\desktop\programming\c++\voxel rendering\vcamera.h
 	"vStatic.h"
 
-1347308769 c:\users\jack\desktop\programming\c++\voxel rendering\lightsource.h
+1347305169 c:\users\jack\desktop\programming\c++\voxel rendering\lightsource.h
 	"vCamera.h"
 
-1350167264 c:\users\jack\desktop\programming\c++\voxel rendering\vnode.h
+1352596109 c:\users\jack\desktop\programming\c++\voxel rendering\vnode.h
 	<vector>
 	<cmath>
+	<cstdlib>
+	<limits.h>
+	<stdint.h>
+	<string>
 

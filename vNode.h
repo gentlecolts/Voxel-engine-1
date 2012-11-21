@@ -3,6 +3,10 @@
 
 #include <vector>
 #include <cmath>
+#include <cstdlib>
+#include <limits.h>
+#include <stdint.h>
+#include <string>
 using namespace std;
 
 struct vNode{//no transparency, 8bit rgb

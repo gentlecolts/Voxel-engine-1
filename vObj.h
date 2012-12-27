@@ -199,10 +199,11 @@ class vObj{
 	}
 
 	//return the color of the voxel which the vector intersects
-	pixel draw(vector3d norm){
+	bool draw(vector3d norm, pixel* pix){//note: the pointer is not an array
 	}
 };
 
+//preprogrammed refrence to a voxel, should handle memory management
 struct vRef{
 	vObj* point;
 	vRef(vObj* to){

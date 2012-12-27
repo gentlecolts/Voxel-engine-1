@@ -1,0 +1,14 @@
+TODO:
+lighting
+memory management
+rendering process
+	camera
+		completely redo the drawing here, it is a mess and outdated
+	voxel
+		finish
+rewrite everything labeled rewrite
+finish everything labeled finish
+node subclass(es)
+	static(?)
+	actor
+post processing

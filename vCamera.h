@@ -49,6 +49,7 @@ class vCamera{
 		caz=cos(az);
 	}
 
+	///obsolete?
 	operator coords(){
 		coords cam;
 		cam.x=x;
@@ -104,6 +105,8 @@ class vCamera{
 		pnt2scrn(x,y,z,&kx,&ky);
 
 	}//*/
+	///REWRITE
+	///obsolete?
 	bool canSee(vObj* obj){
 		/**for each vertex of the cube
 		 *  find normal to camera origin
@@ -144,6 +147,7 @@ class vCamera{
 	}
 
 	//PRECONDITION: parr is size px*py
+	///REWRITE
 	void rendView(int px,int py,vector<vObj>* objarr,vStatic *scene,pixel parr[]){
 		/**for each object in objarr:
 		 * if bounding box is in the camera's view
@@ -171,7 +175,7 @@ class vCamera{
 		scrn.c=norm.dz;
 		scrn.d=-(norm.dx*center.x+norm.dy*center.y+norm.dz*center.z);
 
-		scene->draw(norm);
+		//scene->draw(norm);//this is still needed, but will have to wait until i rewrite this function
 
 		for(int i=0;i<objarr->size();i++){
 			if(canSee(&(*objarr)[i])){

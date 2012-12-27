@@ -42,6 +42,9 @@
 		<Unit filename="landGen.h" />
 		<Unit filename="lightsource.h" />
 		<Unit filename="notes.txt" />
+		<Unit filename="todo.txt">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="vActor.h" />
 		<Unit filename="vBone.h" />
 		<Unit filename="vCamera.h" />

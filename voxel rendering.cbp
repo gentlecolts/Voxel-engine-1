@@ -41,7 +41,9 @@
 		<Unit filename="engine.h" />
 		<Unit filename="landGen.h" />
 		<Unit filename="lightsource.h" />
+		<Unit filename="miscClasses.h" />
 		<Unit filename="notes.txt" />
+		<Unit filename="structure.txt" />
 		<Unit filename="todo.txt">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
@@ -50,7 +52,6 @@
 		<Unit filename="vCamera.h" />
 		<Unit filename="vNode.h" />
 		<Unit filename="vObj.h" />
-		<Unit filename="vStatic.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

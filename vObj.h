@@ -5,50 +5,16 @@
 //using namespace std;
 
 /**voxel cube is divided into 8
- * bone is a start point and angles of rotation, all points on the object are rotated around it
  * each voxel is assumed to the same shape as its parent, with each dimension being half the size, to allow the bounding box to be easily determined
- * static objects dont have bones, but act like a single bone
  */
 
  //TODO generalize the intersection formula to work with more transforms
 
-struct pixel{
-	/**needs:
-	* rgb as double if post processing effects and uint8 if not
-	* distance as double
-	* alpha as 0-255
-	*/
-	double r,g,b,d;
-	uint8_t a;
-};
-
-struct coords{
-	double x,y,z;
-	coords(double x0=0,double y0=0,double z0=0){
-		x=x0;
-		y=y0;
-		z=z0;
-	}
-};
-
-class corners{
+ class corners{
 	coords edge[8];
 	public:
 	coords operator[](int i){return edge[i];}
 	~corners(){delete[] edge;}
-};
-
-struct vector3d{
-	public:
-	double x,y,z,dx,dy,dz;
-	vector3d(double x=0,double y=0,double z=0,double dx=0,double dy=0,double dz=0){
-		this->x=x;
-		this->y=y;
-		this->z=z;
-		this->dx=dx;
-		this->dy=dy;
-		this->dz=dz;
-	}
 };
 
 class vObj{
@@ -88,81 +54,18 @@ class vObj{
 	corners getCorners(){
 	}
 
-	/**i dont like this, redoing
-	#define sphere true
-	///vec is a vector
-	///scale is the scale of the current voxel
-	bool intersects(vector3d vec,coords scale){
-		const double d=vec.dx,e=vec.dy,f=vec.dz;
-		const double
-		x0=vec.x-this->x,
-		y0=vec.y-this->y,
-		z0=vec.z-this->z;
-
-		#if sphere
-		const double
-		rx=this->sx*this->sx,
-		ry=this->sy*this->sy,
-		rz=this->sz*this->sz;
-
-		const double
-		a=d*d/rx+e*e/ry+f*f/rz,
-		b=d*x0/rx+e*y0/ry+f*z0/rz,
-		c=x0*x0/rx+y0*y0/ry+z0*z0/rz;
-		return !(b*b<a*c);
-		#else
-		const double
-		a=scale.x/2,
-		b=scale.y/2,
-		c=scale.z/2;
-
-		//vector<double> vl,vh;
-		double max,mina,tmp;
-		if(d==0 && abs(x0)>a){return false;}
-		else{
-			//vl.push_back(-(a+x0)/d);
-			//vh.push_back((a-x0)/d);
-			min=-(a+x0)/d;
-			max=(a-x0)/d;
-		}
-
-		if(e==0 && abs(y0)>b){return false;}
-		else{
-			//vl.push_back(-(b+y0)/e);
-			//vh.push_back((b-y0)/e);
-			tmp=-(b+y0)/e;
-			min=(tmp<min)?tmp:min;
-			tmp=(b-y0)/e;
-			max=(tmp>max)?tmp:max;
-		}
-
-		if(f==0 && abs(z0)>c){return false;}
-		else{
-			//vl.push_back(-(c+z0)/f);
-			//vh.push_back((c-z0)/f);
-			tmp=-(b+y0)/e;
-			min=(tmp<min)?tmp:min;
-			tmp=(b-y0)/e;
-			max=(tmp>max)?tmp:max;
-		}
-
-		return min<=max;
-
-		#endif
-	}//*/
-
 	//does the object intersect the vector
 	bool intersects(vector3d vec){
 
 	}
-	///does a vector intersect the voxel node, the scale is what to multiply the object's width by
-	bool intersects(vNode vox,vector3d* vec,coords* center,double scale){//smallest possable values are passed, that is the explaination for pointers here
+	//does a vector intersect the voxel node, the scale is what to multiply the object's width by
+	bool intersects(vector3d* vec,coords* center,double scale){//size of pointers is smaller than size of vector3d or coords
 		const double//shifts the vector's start so that the object is centered
-		x0=vec->x-this->x,
-		y0=vec->y-this->y,
-		z0=vec->z-this->z;
+		x0=(vec->x)-(center->x),//changed to center from this
+		y0=(vec->y)-(center->y),
+		z0=(vec->z)-(center->z);
 
-		const double
+		const double//sum of this object's component vectors scaled down to the size of the voxel node
 		a=(xvec.dx+yvec.dx+zvec.dx)*scale,
 		b=(xvec.dy+yvec.dy+zvec.dy)*scale,
 		c=(xvec.dz+yvec.dz+zvec.dz)*scale;
@@ -173,7 +76,7 @@ class vObj{
 		f=vec->dz;
 
 		double max=-INFINITY,min=INFINITY,tmp;//note to self: max float is FLT_MAX, max double is DBL_MAX, and max long double is LDBL_MAX
-		if(d==0 && abs(x0)>a){return false;}
+		if(d==0 && abs(x0)>a){return false;}//if dx is 0 and the x-coordinate of the origin is outside of the box, then the vector does not intersect
 		else{
 			min=-(a+x0)/d;
 			max=(a-x0)/d;
@@ -198,11 +101,47 @@ class vObj{
 		return min<=max;
 	}
 
+	///retraversing every time seems like a waste, make one that returns an array of pixel objects
+	///(make a pixarr (watch for copyrights) class, that stores width and height and the array)
 	//return the color of the voxel which the vector intersects
-	bool draw(vector3d norm, pixel* pix){//note: the pointer is not an array
+	//px and py are width and height of a pixel (assuemd equal), w,h are width and height of the voxel node (assumed equal, thats how its rendered)
+	//px*py>w/(2^d)*h/(2^d)
+	//2^(2*d)>w*w/(px*px)
+	//2^d>w/px
+	//d>log2(w/px)
+	bool draw(vector3d vec, pixel* pix,){//note: the pointer is not an array
+		int d,cur;
+		coords center;
+		center.x=x;
+		center.y=y;
+		center.z=z;
+
+		const int maxdep=0;
+	}
+
+	//index is 0-7
+	//0:1,1,1
+	//1:1,1,-1
+	//2:1,-1,1
+	//3:1,-1,-1
+	//4:-1,1,1
+	//5:-1,1,-1
+	//6:-1,-1,1
+	//7:-1,-1,-1
+	coords childCoord(int index){
+		coords ret;
+		ret.x=1;
+		ret.y=1;
+		ret.z=1;
+
+		if(index<4){ret.x=-1;}
+		if((index>>1)&1==1){ret.y=-1;}// (index/2) mod 2
+		if(index&1==1){ret.z=-1;}
+		return ret;
 	}
 };
 
+///TODO
 //preprogrammed refrence to a voxel, should handle memory management
 struct vRef{
 	vObj* point;

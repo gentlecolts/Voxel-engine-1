@@ -23,11 +23,12 @@ struct Node{
 	Node* last;
 	Node(T d){dat=d;next=NULL;last=NULL;}
 };
+template <class T>
 class List{
-	int count=0;
+	int count;
 
-	void create(){
-		head=new Node(d);
+	void reset(T d){
+		head=new Node<T>(d);
 		current=&head;
 		end=current;
 		count=1;
@@ -38,12 +39,12 @@ class List{
 	Node<T>* end;
 
 	List(T d){
-		create;
+		reset(d);
 	}
 
 	void add(T dat){
 		if(head==NULL){
-			create();
+			reset(dat);
 			return;
 		}
 		Node<T> d(dat);
@@ -54,7 +55,7 @@ class List{
 	}
 
 	void delCurrent(){
-		if(current==null){//there is no head in the first place
+		if(current==NULL){//there is no head in the first place
 			return;
 		}
 
@@ -87,12 +88,14 @@ class List{
 
 class engine{
 	public:
-	int depth;
+	int depth;///what was this for?
 	//consider a linked list instead
-	vector<light>* lights;
-	vector<vObj>* objects;//these are pointers to allow the user of this libary to separatly load and set the objects of the current map
-	vStatic* scene;       //allowing for quick swapping and the use of threads as memory allows
-	vCamera camera;///figure out how to initialize here
+	vector<vLight> lights;
+	vector<vObj> objects;
+	vObj* scene;
+	vCamera camera;///figure out how to initialize here (if possable)
+
+	static bool doPost;//do post processing filters
 
 	int px,py;
 
@@ -102,8 +105,9 @@ class engine{
 	engine(){
 	}
 
-	/**have the camera draw objects
-	 * apply post-processing filters, try to make it as modular as possable, how can the programmer implement their own?
+	/**calculate lighting
+	 * have the camera draw objects
+	 * apply post-processing filters
 	 */
 	void drawScene(){
 		/*
@@ -115,19 +119,32 @@ class engine{
 			}
 		}//*/
 
-		for(light* l:
+		const int len=lights.size();
+		for(int i=0;i<len;i++){
+			lights[i];///tell it to do something
+		}
 		pixel parr[px*py];//because otherwise rendview would have to know how big the screen is
-		camera.rendView(px,py,objects,scene,parr);
+		camera.rendView(px,py,&objects,scene,parr);
+
+		if(doPost){//render to an int array, then to the screen
+			int final[px*py];///consider a more direct final medium (ex. sdl's screen variable)
+			post(parr,final);
+		}else{//render from parr to the screen
+		}
 	}
+
+	void post(pixel pix[],
 
 	/**format:
 	 * vox
 	 * ascii version number ended with ";" (ex vox123;)
 	 * data: read as if it were a heap, but the information stored in vnode's shape will define the tree
-	 *
+	 * alternate: store 8bit shape var, do prefix, if a byte is 0x00, then the next values are color data
 	*/
-	//TODO, figure out the file format
+	///TODO, figure out the file format
 	void readFile(string path){
 	}
 };
+
+bool engine::doPost=true;
 #endif // ENGINE_H_INCLUDED

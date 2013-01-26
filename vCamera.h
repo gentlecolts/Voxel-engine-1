@@ -1,22 +1,8 @@
 #ifndef VCAMERA_H_INCLUDED
 #define VCAMERA_H_INCLUDED
 
-#include "vStatic.h"
-
-float invsqrt(float x){
-	float xhalf=0.5f*x;
-	int i=*(int*)&x;
-	i=0x5f3759df-(i>>1);
-	x=*(float*)&i;
-	x=x*(1.5f-xhalf*x*x);
-	return x;
-}
-
-#define sqrt(x) (1.0/invsqrt(x))
-
-struct plane{
-	double a,b,c,d;
-};
+//#include "vStatic.h"
+#include "vActor.h"
 
 //TODO: add tilt
 class vCamera{
@@ -106,7 +92,6 @@ class vCamera{
 
 	}//*/
 	///REWRITE
-	///obsolete?
 	bool canSee(vObj* obj){
 		/**for each vertex of the cube
 		 *  find normal to camera origin
@@ -144,11 +129,12 @@ class vCamera{
 	//first find the 2d bounding box of the object:find the min and max coords of the
 	//
 	void draw(vObj* obj,vector3d* norm,pixel parr[]){
+
 	}
 
 	//PRECONDITION: parr is size px*py
 	///REWRITE
-	void rendView(int px,int py,vector<vObj>* objarr,vStatic *scene,pixel parr[]){
+	void rendView(int px,int py,vector<vObj>* objarr,vObj *scene,pixel parr[]){
 		/**for each object in objarr:
 		 * if bounding box is in the camera's view
 		 * project bounding box coords to find min and max x and y
@@ -201,6 +187,7 @@ class vCamera{
 	///note to self, get coords, centers of component vecs should still have old dist, adjust origin or screen center to the new dist
 	///potentiall helpfull, points have same inclination and azimuth, but different radius
 	///also changes viewagle
+	//what exactly did i even mean by the above?
 	double getZoom(){return zoom;}
 	void setZoom(double newZoom){zoom=newZoom;}
 };

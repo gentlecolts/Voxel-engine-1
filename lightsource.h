@@ -25,7 +25,7 @@
  * note: for at least initial testing: could use only the distance to the root voxel?
  */
 
-class light{
+class vLight{
 	int res;//how many angles there are, recalculation necessary on change
 	public:
 	const static int def_res=20;
@@ -33,7 +33,7 @@ class light{
 	int range;//doesnt need this? can speed up but might not need to
 	//also see http://www.gamedev.net/topic/386146-opengl-attenuation-settings/
 
-	light(int resolution=def_res){
+	vLight(int resolution=def_res){
 		zbuf[def_res*def_res];
 	}
 };

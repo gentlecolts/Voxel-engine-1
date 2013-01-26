@@ -12,3 +12,11 @@ node subclass(es)
 	static(?)
 	actor
 post processing
+
+
+CONSIDER:
+after finishing with octree implementation, consider a stack of quadtrees implementation:
+-the y(or any other) dimension of the cube is divided into a consant amount by being an array of quadtree slices
+-the array only needs the head as the rest is pointers
+-advantages being a potential speed boost by knowing which y slice(s) the vector from the camera intersects
+--though one has to consider: what if the vector intersects a slice on the bounding box, but goes through it and intersects the model at a different one

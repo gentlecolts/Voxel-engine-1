@@ -1,0 +1,64 @@
+engine:
+main code, a basic user of the lib should only need the functions here and the classes
+
+
+vObj:
+-contains basic code for a static voxel model (though it has those vectors which allow skewing, rotation, and scaling)
+fields:
+	vNode tree - head of the voxel tree
+	double x,y,z - position of center
+	vector3d xvec,yvec,zvec - essentially scaled unit vectors if the object is at the origin and untransformed, allowing the voxel object to be skewed
+functions:
+	bool intersects(vector3d vec) - does this vector intersect the object (dont know yet if should be bounding box or actual model)
+	bool intersects(vector3d* vec,coords* center,double scale) - does the vector intersect that node
+	bool draw(vector3d vec, pixel* pix) - sets pix based on where that vector intersects the model and returns true if it actually intersects
+
+vActor:
+-subclasses vObj
+-overrides the basic rendering function with one which allows for tranformations
+fields:
+	same as vObj
+	might need new one to store info about tranform
+functions
+	same as vObj with
+
+
+vBone:
+-subclasses vActor
+-adds bones and bone related functions to the models
+--note that this could likely be accomplished without this class by taking advantage of vObj's (or vActor's) vector3d fields
+--also note, that hasbone could be a boolean in vObj's (and vActor's) constructor
+---and by having a const function pointer field (if allowed?), this class's functionality could be implemented in those two classes instead
+
+vNode:
+-the actual node itself
+fields:
+	vNode* children[8]
+	uint8_t r,g,b - color data
+	uint8_t shape - might be unnecessary
+
+vCamera:
+
+
+vLight:
+-these should act as a lightsource, meaning they are expected to be physical objects present in the current scene, not post filters
+fields:
+
+
+vStream:
+***for consideration***
+-subclasses vobj
+-stored in an array (maybe a linked list of vectors where each level of the tree is a node?) - easy and faster to read from and write to files
+-only needs to store 32bit(24?) structure (8 bits for children, 8 for which are leaf nodes, 32/24 if it is a leaf)
+-potentially slower to work with due to having to find where each element is
+-did some math, if i use 32 bits, a non sparse tree with 8 levels would take 64MB and be fairly high detail, this could mean that i can just go with a heap like structure (array)
+--if i do go with a non sparse heap like structure, then maybe i could take a speed loss by compressing sparse space (instead of 0x0000,0x0000,0x0000; use 0x0000,0x0003?)
+--compression might not be necessary
+
+fields:
+	vector<uint32_t> data
+functions:
+	same as vobj, but modified to work with data
+	function for counting number of non-zero bits in the number
+		see http://stackoverflow.com/questions/9244153/what-is-the-most-efficient-way-of-counting-the-number-of-1s-in-an-integer
+	also maybe it should have a way to convert to vobj, so data can be read to this and converted to the faster tree shaped format
